@@ -16,7 +16,15 @@
     alacritty-ligature-src = { url = github:zenixls2/alacritty/ligature; flake = false; };
   };
 
-  outputs = { self, nixpkgs, flake-utils, fenix, naersk, alacritty-src, alacritty-ligature-src }: flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    { self
+    , nixpkgs
+    , flake-utils
+    , fenix
+    , naersk
+    , alacritty-src
+    , alacritty-ligature-src
+    }: flake-utils.lib.eachDefaultSystem (system:
     let
       pkgs = import nixpkgs {
         inherit system;
@@ -24,21 +32,21 @@
           fenix.overlay
         ];
       };
-    in
-    rec {
-      defaultPackage = (naersk.lib.${system}.override {
+
+      naersk-lib = (naersk.lib.${system}.override {
         inherit (fenix.packages.${system}.latest) cargo rustc;
-      }).buildPackage {
-        src = alacritty-src;
-        buildInputs = with pkgs; with darwin.apple_sdk.frameworks; [
-          libiconv
+      });
+
+      attrsForNaersk = {
+        buildInputs = with pkgs; [ libiconv ]
+          ++ pkgs.lib.optionals (system == "x86_64-darwin") (with pkgs.darwin.apple_sdk.frameworks; [
           AppKit
           CoreGraphics
           CoreServices
           CoreText
           Foundation
           OpenGL
-        ];
+        ]);
         overrideMain = (_: {
           postInstall = ''
             mkdir $out/Applications
@@ -46,6 +54,18 @@
             ln -s $out/bin $out/Applications/Alacritty.app/Contents/MacOS
           '';
         });
+      };
+
+    in
+    rec {
+      packages.alacritty-nightly = naersk-lib.buildPackage (attrsForNaersk // { src = alacritty-src; });
+      packages.alacritty-ligature = naersk-lib.buildPackage (attrsForNaersk // { src = alacritty-ligature-src; });
+
+      defaultPackage = packages.alacritty-nightly;
+
+      overlay = final: prev: {
+        alacritty = packages.alacritty-nightly;
+        alacritty-ligature = packages.alacritty-ligature;
       };
     });
 }
