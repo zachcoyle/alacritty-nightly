@@ -34,7 +34,7 @@
       };
 
       naersk-lib = (naersk.lib.${system}.override {
-        inherit (fenix.packages.${system}.latest) cargo rustc;
+        inherit (pkgs.fenix.latest) cargo rustc;
       });
 
       attrsForNaersk = {
