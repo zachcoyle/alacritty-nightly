@@ -4,12 +4,8 @@
   inputs = {
     nixpkgs.url = github:nixos/nixpkgs/nixpkgs-unstable;
     flake-utils.url = github:numtide/flake-utils;
-    fenix = {
-      url = github:nix-community/fenix;
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     naersk = {
-      url = github:nmattia/naersk;
+      url = github:nix-community/naersk;
       inputs.nixpkgs.follows = "nixpkgs";
     };
     alacritty-src = { url = github:alacritty/alacritty; flake = false; };
@@ -20,7 +16,6 @@
     { self
     , nixpkgs
     , flake-utils
-    , fenix
     , naersk
     , alacritty-src
     , alacritty-ligature-src
@@ -28,13 +23,10 @@
     let
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [
-          fenix.overlay
-        ];
       };
 
       naersk-lib = (naersk.lib.${system}.override {
-        inherit (pkgs.fenix.latest) cargo rustc;
+        inherit (pkgs) cargo rustc;
       });
 
       attrsForNaersk = {
