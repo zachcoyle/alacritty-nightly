@@ -20,11 +20,11 @@
     "alacritty-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1626636578,
-        "narHash": "sha256-Jz/JZMSHO8s4Do/H9VUAUW4/lxBX2yk3BhBm0tFLq5c=",
+        "lastModified": 1626991872,
+        "narHash": "sha256-Q2tI3sa8bwbVU/QM//fosHoXUyVn/4jeKSE+lonCPrw=",
         "owner": "alacritty",
         "repo": "alacritty",
-        "rev": "7913aa557618ca0df8d5a144f9425cb9b357c815",
+        "rev": "78795522e93a6010e07da524256c0339720e6d1c",
         "type": "github"
       },
       "original": {
