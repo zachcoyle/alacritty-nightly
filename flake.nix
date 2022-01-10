@@ -4,6 +4,10 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    flake-compat = {
+      url = "github:edolstra/flake-compat";
+      flake = false;
+    };
     naersk = {
       url = "github:nix-community/naersk";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -19,7 +23,7 @@
   };
 
   outputs = { self, nixpkgs, flake-utils, naersk, alacritty-src
-    , alacritty-ligature-src }:
+    , alacritty-ligature-src, ... }:
     {
       overlay = final: prev:
         let
@@ -57,7 +61,7 @@
             });
           };
         in {
-          alacritty = naersk-lib.buildPackage
+          alacritty-nightly = naersk-lib.buildPackage
             (attrsForNaersk // { src = alacritty-src; });
           alacritty-ligature = naersk-lib.buildPackage
             (attrsForNaersk // { src = alacritty-ligature-src; });
@@ -69,7 +73,7 @@
           overlays = [ self.overlay ];
         };
       in rec {
-        packages.alacritty-nightly = pkgs.alacritty;
+        packages.alacritty-nightly = pkgs.alacritty-nightly;
         packages.alacritty-ligature = pkgs.alacritty-ligature;
         defaultPackage = pkgs.alacritty-nightly;
       });
