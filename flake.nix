@@ -35,7 +35,7 @@
 
           attrsForNaersk = {
             buildInputs = with pkgs;
-              [ libiconv ] ++ pkgs.stdenv.isLinux
+              [ libiconv ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux
               (with pkgs; [
                 cmake
                 xorg.libxcb
@@ -43,7 +43,7 @@
                 fontconfig
                 pkgconfig
                 libxkbcommon
-              ]) ++ pkgs.stdenv.isDarwin
+              ]) ++ pkgs.lib.optionals pkgs.stdenv.isDarwin
               (with pkgs.darwin.apple_sdk.frameworks; [
                 AppKit
                 CoreGraphics
