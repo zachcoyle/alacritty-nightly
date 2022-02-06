@@ -17,6 +17,22 @@
         "type": "github"
       }
     },
+    "alacritty-sixel-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1643984322,
+        "narHash": "sha256-AExeZCWUvvZfAqVyj3KPqlKRilgllFibIu2xsHiaD/k=",
+        "owner": "microo8",
+        "repo": "alacritty-sixel",
+        "rev": "3ca714a720d91a2a7f8be7c55851bf0afb44941c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "microo8",
+        "repo": "alacritty-sixel",
+        "type": "github"
+      }
+    },
     "alacritty-src": {
       "flake": false,
       "locked": {
@@ -103,6 +119,7 @@
     "root": {
       "inputs": {
         "alacritty-ligature-src": "alacritty-ligature-src",
+        "alacritty-sixel-src": "alacritty-sixel-src",
         "alacritty-src": "alacritty-src",
         "flake-compat": "flake-compat",
         "flake-utils": "flake-utils",
