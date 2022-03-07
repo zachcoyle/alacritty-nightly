@@ -20,11 +20,11 @@
     "alacritty-sixel-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1643984322,
-        "narHash": "sha256-AExeZCWUvvZfAqVyj3KPqlKRilgllFibIu2xsHiaD/k=",
+        "lastModified": 1646025164,
+        "narHash": "sha256-1BSexDu1lDzJFwlFOScYtFIIPXu7000IF7mxFk4X0xU=",
         "owner": "microo8",
         "repo": "alacritty-sixel",
-        "rev": "3ca714a720d91a2a7f8be7c55851bf0afb44941c",
+        "rev": "f6f2fe5339c39907ac89845e1585c91d4143d12b",
         "type": "github"
       },
       "original": {
