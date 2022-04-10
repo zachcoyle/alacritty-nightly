@@ -33,6 +33,20 @@
         let
           pkgs = nixpkgs.legacyPackages.${prev.system};
 
+          rpathLibs = with pkgs;
+            [
+              expat
+              fontconfig
+              freetype
+              libGL
+              xorg.libX11
+              xorg.libXcursor
+              xorg.libXi
+              xorg.libXrandr
+              xorg.libXxf86vm
+              xorg.libxcb
+            ] ++ pkgs.lib.optionals stdenv.isLinux [ libxkbcommon wayland ];
+
           naersk-lib = (naersk.lib.${prev.system}.override {
             inherit (pkgs) cargo rustc;
           });
@@ -49,28 +63,15 @@
               pkg-config
               python3
             ];
-            buildInputs = with pkgs;
-              [
-                libiconv
-                expat
-                fontconfig
-                freetype
-                libGL
-                xorg.libX11
-                xorg.libXcursor
-                xorg.libXi
-                xorg.libXrandr
-                xorg.libXxf86vm
-                xorg.libxcb
-              ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux
-              (with pkgs; [ fontconfig pkgconfig libxkbcommon wayland ])
-              ++ pkgs.lib.optionals pkgs.stdenv.isDarwin
-              (with pkgs.darwin.apple_sdk.frameworks; [
+
+            buildInputs = rpathLibs ++ pkgs.lib.optionals pkgs.stdenv.isDarwin
+              (with pkgs; [
                 AppKit
                 CoreGraphics
                 CoreServices
                 CoreText
                 Foundation
+                libiconv
                 OpenGL
               ]);
 
@@ -91,6 +92,13 @@
                 install -D extra/linux/Alacritty.desktop -t $out/share/applications/
                 install -D extra/linux/io.alacritty.Alacritty.appdata.xml -t $out/share/appdata/
                 install -D extra/logo/compat/alacritty-term.svg $out/share/icons/hicolor/scalable/apps/Alacritty.svg
+
+                # patchelf generates an ELF that binutils' "strip" doesn't like:
+                #    strip: not enough room for program headers, try linking with -N
+                # As a workaround, strip manually before running patchelf.
+                strip -S $out/bin/alacritty
+
+                patchelf --set-rpath "${nixpkgs.lib.makeLibraryPath rpathLibs}" $out/bin/alacritty
               '') + ''
 
                 echo -n "output is: $out"
