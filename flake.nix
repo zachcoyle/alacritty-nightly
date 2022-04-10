@@ -26,8 +26,8 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, naersk, alacritty-src, alacritty-sixel-src
-    , alacritty-ligature-src, ... }:
+  outputs = { self, nixpkgs, flake-utils, naersk, alacritty-src
+    , alacritty-sixel-src, alacritty-ligature-src, ... }:
     {
       overlay = final: prev:
         let
@@ -39,14 +39,25 @@
 
           attrsForNaersk = {
             buildInputs = with pkgs;
-              [ libiconv ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux
-              (with pkgs; [
-                cmake
+              [
+                libiconv
+                expat
+                fontconfig
+                freetype
+                libGL
+                xorg.libX11
+                xorg.libXcursor
+                xorg.libXi
+                xorg.libXrandr
+                xorg.libXxf86vm
                 xorg.libxcb
+              ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux (with pkgs; [
+                cmake
                 python3
                 fontconfig
                 pkgconfig
                 libxkbcommon
+                wayland
               ]) ++ pkgs.lib.optionals pkgs.stdenv.isDarwin
               (with pkgs.darwin.apple_sdk.frameworks; [
                 AppKit
