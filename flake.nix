@@ -38,6 +38,17 @@
           });
 
           attrsForNaersk = {
+            NIX_DEBUG = 1;
+            NIX_ENFORCE_PURITY = 0;
+            nativeBuildInputs = with pkgs; [
+              cmake
+              gzip
+              installShellFiles
+              makeWrapper
+              ncurses
+              pkg-config
+              python3
+            ];
             buildInputs = with pkgs;
               [
                 libiconv
@@ -51,14 +62,9 @@
                 xorg.libXrandr
                 xorg.libXxf86vm
                 xorg.libxcb
-              ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux (with pkgs; [
-                cmake
-                python3
-                fontconfig
-                pkgconfig
-                libxkbcommon
-                wayland
-              ]) ++ pkgs.lib.optionals pkgs.stdenv.isDarwin
+              ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux
+              (with pkgs; [ fontconfig pkgconfig libxkbcommon wayland ])
+              ++ pkgs.lib.optionals pkgs.stdenv.isDarwin
               (with pkgs.darwin.apple_sdk.frameworks; [
                 AppKit
                 CoreGraphics
@@ -67,21 +73,58 @@
                 Foundation
                 OpenGL
               ]);
+
+            dontPatchELF = true;
+
             overrideMain = (_: {
-              postInstall = ''
+              outputs = [ "out" "terminfo" ];
+              postPatch = ''
+                substituteInPlace alacritty/src/config/ui_config.rs \
+                  --replace xdg-open ${pkgs.xdg-utils}/bin/xdg-open
+              '';
+
+              postInstall = (if pkgs.stdenv.isDarwin then ''
                 mkdir $out/Applications
                 cp -r extra/osx/Alacritty.app $out/Applications
                 ln -s $out/bin $out/Applications/Alacritty.app/Contents/MacOS
+              '' else ''
+                install -D extra/linux/Alacritty.desktop -t $out/share/applications/
+                install -D extra/linux/io.alacritty.Alacritty.appdata.xml -t $out/share/appdata/
+                install -D extra/logo/compat/alacritty-term.svg $out/share/icons/hicolor/scalable/apps/Alacritty.svg
+              '') + ''
+
+                echo -n "output is: $out"
+
+                installShellCompletion --zsh extra/completions/_alacritty
+                installShellCompletion --bash extra/completions/alacritty.bash
+                installShellCompletion --fish extra/completions/alacritty.fish
+
+                install -dm 755 "$out/share/man/man1"
+                gzip -c extra/alacritty.man > "$out/share/man/man1/alacritty.1.gz"
+                gzip -c extra/alacritty-msg.man > "$out/share/man/man1/alacritty-msg.1.gz"
+
+                install -Dm 644 alacritty.yml $out/share/doc/alacritty.yml
+
+                install -dm 755 "$terminfo/share/terminfo/a/"
+                tic -xe alacritty,alacritty-direct -o "$terminfo/share/terminfo" extra/alacritty.info
+                mkdir -p $out/nix-support
+                echo "$terminfo" >> $out/nix-support/propagated-user-env-packages
               '';
             });
           };
         in {
-          alacritty-nightly = naersk-lib.buildPackage
-            (attrsForNaersk // { src = alacritty-src; });
-          alacritty-sixel = naersk-lib.buildPackage
-            (attrsForNaersk // { src = alacritty-sixel-src; });
-          alacritty-ligature = naersk-lib.buildPackage
-            (attrsForNaersk // { src = alacritty-ligature-src; });
+          alacritty-nightly = naersk-lib.buildPackage (attrsForNaersk // {
+            pname = "alacritty-nightly";
+            src = alacritty-src;
+          });
+          alacritty-sixel = naersk-lib.buildPackage (attrsForNaersk // {
+            pname = "alacritty-sixel";
+            src = alacritty-sixel-src;
+          });
+          alacritty-ligature = naersk-lib.buildPackage (attrsForNaersk // {
+            pname = "alacritty-ligature";
+            src = alacritty-ligature-src;
+          });
         };
     } // flake-utils.lib.eachDefaultSystem (system:
       let
