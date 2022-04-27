@@ -65,7 +65,7 @@
             ];
 
             buildInputs = rpathLibs ++ pkgs.lib.optionals pkgs.stdenv.isDarwin
-              (with pkgs; [
+              (with pkgs; with darwin.apple_sdk.frameworks; [
                 AppKit
                 CoreGraphics
                 CoreServices
