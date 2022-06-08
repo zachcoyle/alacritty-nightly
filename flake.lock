@@ -20,11 +20,11 @@
     "alacritty-sixel-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1650864205,
-        "narHash": "sha256-b2LQWH9tXI4wTNUnVPeIN+V+GwNrpuqCx86BQwPJGMg=",
+        "lastModified": 1651472856,
+        "narHash": "sha256-8SQgnB6q7sXeXcIzum/NAUj3mju7IERreXHMvt2cQEc=",
         "owner": "microo8",
         "repo": "alacritty-sixel",
-        "rev": "f474065df28aff57fc3bb9d98e96632ec9b8da95",
+        "rev": "513e6a90c2fd0a019b214dab96c4e211d151a2f9",
         "type": "github"
       },
       "original": {
@@ -36,11 +36,11 @@
     "alacritty-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1649016524,
-        "narHash": "sha256-OU3W5QBVg8Q9T8yMmvKCMhZbX7ArJDZJJcfrD6l3cm8=",
+        "lastModified": 1654589343,
+        "narHash": "sha256-IOQxIlYO1IJhJCqjQlzx+HIL3RgI67sPRaKms0NTyAQ=",
         "owner": "alacritty",
         "repo": "alacritty",
-        "rev": "851dbc328efd9b212bb2c7b9caaf5763eb4e524b",
+        "rev": "29b1ff59e29cccd69bee349ca6937082dee718f6",
         "type": "github"
       },
       "original": {
