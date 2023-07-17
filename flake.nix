@@ -38,6 +38,7 @@
               expat
               fontconfig
               freetype
+            ] ++ lib.optionals stdenv.isLinux [
               libGL
               xorg.libX11
               xorg.libXcursor
@@ -45,7 +46,9 @@
               xorg.libXrandr
               xorg.libXxf86vm
               xorg.libxcb
-            ] ++ pkgs.lib.optionals stdenv.isLinux [ libxkbcommon wayland ];
+              libxkbcommon
+              wayland
+            ];
 
           naersk-lib = (naersk.lib.${prev.system}.override {
             inherit (pkgs) cargo rustc;
